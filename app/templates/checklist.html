@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+        p,
+        u,
+        div {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+        }
+
+        .font {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+        }
+
+        .paragraphs {
+            padding: 2pt;
+            text-indent: 0pt;
+            line-height: 12pt;
+            text-align: left;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+        }
+
+
+        .headerHeight {
+            height: 25pt;
+
+        }
+
+        .greyBorder {
+            border-style: solid;
+            border-width: 1pt;
+            border-color: #A6A6A6;
+        }
+
+        .headerText {
+            padding-top: 5pt;
+            padding-left: 5pt;
+            text-indent: 0pt;
+            text-align: left;
+        }
+
+        .flexBox {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .textCenter {
+            text-align: center;
+        }
+
+        .pic {
+            padding: 2px;
+            max-width: 540px;
+            max-height: 540px;
+            object-fit: contain;
+        }
+
+        .imgWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width:550px;
+            height:550px;
+        }
+    </style>
+    <meta name="pdfkit-orientation" content="Landscape">
+</head>
+
+<body>
+    <h2>
+        {{name}}
+    </h2>
+
+    {% for section in data['todo_list_sections'] %}
+    <h3>{{section.title}}</h3>
+
+        {% for task in section['tasks'] %}
+            <div style="padding-left: 30px;">
+                <h4>{{loop.index}}: {{task.title}}</h4>
+                {% if task.details != "" %}
+                    <p>Details: {{task.details}}</p>
+                {%endif%}
+
+                <ul>
+                    {% for subtask in task.sub_tasks %}
+                        {% if subtask.label != ""  %}
+                            <li>{{subtask.label}}</li>
+                        {% else %}
+                            <li>NO SUBTASK LABEL</li>
+                        {%endif%}
+                    
+                    <ul>
+                        {% for answer in subtask.answer_array %}
+                            <li>
+                                {{answer}}
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    
+                {% endfor %}  
+                </ul>
+                <div class="flexBox">
+                    {% for photo in task.photos %}
+                    <div class="imgWrapper">
+                        <a href="{{photo.original_url}}">
+                            <img class="pic" src="{{photo.original_url}}">
+                        </a>
+                    </div>
+
+                      
+                    {% endfor %}
+                </div>
+            </div>
+
+        {% endfor %} 
+    <hr>
+    {% endfor %} 
+
+</body>
+
+</html>
