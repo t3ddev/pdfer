@@ -20,6 +20,9 @@ def make_proposal():
 
         for subcat in cat['subcategories']:
             for item in subcat['items']:
+                if item.get('priceHidden', False):
+                    item['price'] = "N/A"
+                    item['total'] = "N/A"
                 if "EXP[" in item['longDescription'] and "]EXP" in item['longDescription']:
                     expressions = re.findall(r'EXP\[(.*?)\]EXP', item['longDescription'])
                     item['longDescription'] = item['longDescription'].replace("EXP[", "").replace("]EXP","")
