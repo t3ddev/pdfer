@@ -21,37 +21,36 @@
 
 <body>
 
-<!-- СВОДНАЯ ТАБЛИЦА CUSTOM ITEMS (перед H3) -->
 {% if custom_items and custom_items|length > 0 %}
 <h3>Custom Items — Summary</h3>
 <table class="table" cellspacing="0">
     <thead>
-    <tr class="greyBorder" bgcolor="#FF0000" >
-        <th class="greyBorder" style="padding: 6pt; text-align:left;">Name</th>
-        <th class="greyBorder" style="padding: 6pt; text-align:left;">Description</th>
-        <th class="greyBorder" style="padding: 6pt; text-align:center; width:10%;">Quantity</th>
-        <th class="greyBorder" style="padding: 6pt; text-align:center; width:10%;">Price</th>
-        <th class="greyBorder" style="padding: 6pt; text-align:center; width:10%;">Total</th>
+    <tr class="greyBorder" bgcolor="#FF0000">
+        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:left;">Name</th>
+        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:left;">Description</th>
+        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Quantity</th>
+        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Price</th>
+        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Total</th>
     </tr>
     </thead>
     <tbody>
     {% for item in custom_items %}
     <tr bgcolor="#F9F9F9">
-        <td class="greyBorder" style="padding: 6pt;">
+        <td class="greyBorder" style="padding:6pt;">
             <b>Custom item:</b> {{ item.name }} <b>NON-DISCOUNTABLE</b>
         </td>
-        <td class="greyBorder" style="padding: 6pt;">
+        <td class="greyBorder" style="padding:6pt;">
             {{ item.longDescription }}
+            {% if item.internalInstructions %}
+            <p class="red"><b>Internal Instruction:</b> {{ item.internalInstructions }}</p>
+            {% endif %}
+            {% if item.internalNotes %}
+            <p class="red"><b>Internal Notes:</b> {{ item.internalNotes }}</p>
+            {% endif %}
         </td>
-        <td class="greyBorder" style="padding: 6pt; text-align:center;">
-            1
-        </td>
-        <td class="greyBorder" style="padding: 6pt; text-align:center;">
-            {{ item.price }}
-        </td>
-        <td class="greyBorder" style="padding: 6pt; text-align:center;">
-            {{ item.total }}
-        </td>
+        <td class="greyBorder" style="padding:6pt;text-align:center;">1</td>
+        <td class="greyBorder" style="padding:6pt;text-align:center;">{{ item.price }}</td>
+        <td class="greyBorder" style="padding:6pt;text-align:center;">{{ item.total }}</td>
     </tr>
     {% endfor %}
     </tbody>
@@ -59,12 +58,8 @@
 <br>
 {% endif %}
 
-<h3>
-    INTERNAL SCOPE: FULL PROJECT SCOPE.
-</h3>
-<h4>
-    BASEMENT TOTAL SQ. FT. = {{data['estimatesInfo'][0]['squareFootage']}} SQ. FT.
-</h4>
+<h3>INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
+<h4>BASEMENT TOTAL SQ. FT. = {{ data['estimatesInfo'][0]['squareFootage'] }} SQ. FT.</h4>
 <p>
     <b>ATTENTION! PROPERTY ON SEPTIC? BEDROOMS OR ROOMS WITH CLOSETS ARE NOT POSSIBLE UNLESS WRITTEN CONFIRMATION
         FROM COUNTY/CITY HEALTH DEPARTMENT IS PROVIDED! THIS INCLUDES REMODELING PROJECTS WITH EXISTING ROOMS!</b>
@@ -75,11 +70,11 @@
     <tbody>
     <tr class="greyBorder">
         <td class="headerHeight" colspan="3" bgcolor="#FF0000">
-            <p class="headerText font" style="color:white">{{category.id}} <u class="font">{{category.name}}</u></p>
+            <p class="headerText font" style="color:white">{{ category.id }} <u class="font">{{ category.name }}</u></p>
         </td>
         <td class="greyBorder" style="color:white" bgcolor="#FF0000" colspan="4">
-            <div class="flexBox textCenter" style="padding-top: 5pt;">
-                ${{category.totalFormatted}}
+            <div class="flexBox textCenter" style="padding-top:5pt;">
+                ${{ category.totalFormatted }}
             </div>
         </td>
     </tr>
@@ -87,76 +82,66 @@
     {% for subcategory in category.subcategories %}
     <tr class="headerHeight">
         <td class="greyBorder" colspan="3" bgcolor="#D9E1F3">
-            <p class="headerText font" style="padding-left: 30px;">{{subcategory.name}}</p>
+            <p class="headerText font" style="padding-left:30px;">{{ subcategory.name }}</p>
         </td>
-        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3">
-            <p class="flexBox textCenter">Quantity</p>
-        </td>
-        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3">
-            <p class="flexBox textCenter">Price</p>
-        </td>
-        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3">
-            <p class="flexBox textCenter">Total</p>
-        </td>
+        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Quantity</p></td>
+        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Price</p></td>
+        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
     </tr>
 
     {% for item in subcategory['items'] %}
     {% if not item['omitFromPDF'] %}
     <tr>
-        <!-- Description column -->
+        <!-- Description -->
         <td class="greyBorder" style="width:70%;" colspan="3" bgcolor="#F1F1F1">
-            <div class="paragraphs" style="padding-left: 30px;">
+            <div class="paragraphs" style="padding-left:30px;">
                 {% if item.catelogId == 'Custom' %}
-                <p><b>Custom item:</b> {{item.name}} <b>NON-DISCOUNTABLE</b></p>
-                {{item.longDescription}}
+                <p><b>Custom item:</b> {{ item.name }} <b>NON-DISCOUNTABLE</b></p>
+                {{ item.longDescription }}
                 {% else %}
-                <p><b>ITEM {{item.catelogId}}.</b> {{item.name}}</p>
+                <p><b>ITEM {{ item.catelogId }}.</b> {{ item.name }}</p>
                 {% if item.additionalInfo != "" %}
-                <p><b>ADDITIONAL NOTE: {{item.additionalInfo}}</b></p>
+                <p><b>ADDITIONAL NOTE: {{ item.additionalInfo }}</b></p>
                 {% endif %}
-                {{item.longDescription}}
+                {{ item.longDescription }}
+                <a href="https://info.basementremodeling.com/guide_details/{{ item.permanentId }}">Click here for details</a>
+                {% endif %}
 
-                <a href="https://info.basementremodeling.com/guide_details/{{item.permanentId}}">Click here for details</a>
-
-                <!-- NEW: опциональные строки красным -->
+                <!-- ALWAYS show Internal* lines for any item type -->
                 {% if item.internalInstructions %}
                 <p class="red"><b>Internal Instruction:</b> {{ item.internalInstructions }}</p>
                 {% endif %}
                 {% if item.internalNotes %}
                 <p class="red"><b>Internal Notes:</b> {{ item.internalNotes }}</p>
                 {% endif %}
-                {% endif %}
             </div>
         </td>
 
-        <!-- Quantity column -->
+        <!-- Quantity -->
         <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
             {% if item.catelogId == 'Custom' %}
             <p class="flexBox textCenter">1</p>
             {% else %}
-            <p class="flexBox textCenter">{{item.quantity}}</p>
+            <p class="flexBox textCenter">{{ item.quantity }}</p>
             {% endif %}
         </td>
 
-        <!-- Price column (ВСЕГДА показываем) -->
+        <!-- Price -->
         <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
             <p class="flexBox textCenter">{{ item.price }}</p>
         </td>
 
-        <!-- Totals column (ВСЕГДА показываем) -->
+        <!-- Total -->
         <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
-            <p class="flexBox textCenter">
-                {{ item.total }}
-            </p>
+            <p class="flexBox textCenter">{{ item.total }}</p>
         </td>
     </tr>
     {% endif %}
-    {% endfor %} <!-- Items -->
-
-    {% endfor %} <!-- Subcategories -->
+    {% endfor %} <!-- items -->
+    {% endfor %} <!-- subcats -->
     </tbody>
 </table>
-{% endfor %} <!-- Categories -->
+{% endfor %} <!-- categories -->
 
 </body>
 </html>
