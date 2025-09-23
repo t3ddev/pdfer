@@ -8,7 +8,7 @@ import json
 import math
 import proposal
 import checklist
-
+import internal_scope
 
 app = Flask(__name__, static_url_path='/static')
 log = logging.getLogger('werkzeug')
@@ -16,6 +16,7 @@ log.disabled = True
 
 app.add_url_rule('/proposal', view_func=proposal.make_proposal)
 app.add_url_rule('/checklist', view_func=checklist.make_checklist)
+app.add_url_rule('/internal-scope', view_func=internal_scope.make_internal_scope)
 
 @app.route("/check",methods=['GET'])
 def health_check():
