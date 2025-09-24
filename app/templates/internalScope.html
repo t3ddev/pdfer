@@ -56,11 +56,17 @@
             </p>
         </td>
     </tr>
+
     {% endfor %}
     </tbody>
+
 </table>
 <br>
 {% endif %}
+<!-- Force page break for PDF (wkhtmltopdf uses page-break-after,
+     browsers prefer break-after: page). Keeping both for compatibility -->
+<div style="page-break-after: always;"></div>
+<div style="break-after: page;"></div>
 
 <h3>INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
 <h4>BASEMENT TOTAL SQ. FT. = {{ data['estimatesInfo'][0]['squareFootage'] }} SQ. FT.</h4>
