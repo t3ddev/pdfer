@@ -46,26 +46,15 @@
             {% endif %}
         </td>
         <td class="greyBorder" style="padding:6pt;text-align:center;">1</td>
-        <!-- Price -->
+        <td class="greyBorder" style="padding:6pt;text-align:center;">{{ item.price }}</td>
         <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
             <p class="flexBox textCenter">
-                {{ item.price }}
+                {{ item.total }}<br/>
                 {% if item.priceHidden %}
                 <span style="color:red; font-size:10pt;">(hidden from customer)</span>
                 {% endif %}
             </p>
         </td>
-
-        <!-- Total -->
-        <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
-            <p class="flexBox textCenter">
-                {{ item.total }}
-                {% if item.priceHidden %}
-                <span style="color:red; font-size:10pt;">(hidden from customer)</span>
-                {% endif %}
-            </p>
-        </td>
-
     </tr>
     {% endfor %}
     </tbody>
@@ -148,7 +137,12 @@
 
         <!-- Total -->
         <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
-            <p class="flexBox textCenter">{{ item.total }}</p>
+            <p class="flexBox textCenter">
+                {{ item.total }}<br/>
+                {% if item.priceHidden %}
+                <span style="color:red; font-size:10pt;">(hidden from customer)</span>
+                {% endif %}
+            </p>
         </td>
     </tr>
     {% endif %}
