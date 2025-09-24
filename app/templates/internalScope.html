@@ -22,12 +22,11 @@
 <body>
 
 {% if custom_items and custom_items|length > 0 %}
-<h3>Custom Items — Summary</h3>
+<h3>CUSTOM ITEMS — SUMMARY</h3>
 <table class="table" cellspacing="0">
     <thead>
     <tr class="greyBorder" bgcolor="#FF0000">
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:left;">Name</th>
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:left;">Description</th>
+        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:left;">Custom items</th>
         <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Quantity</th>
         <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Price</th>
         <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Total</th>
@@ -36,21 +35,37 @@
     <tbody>
     {% for item in custom_items %}
     <tr bgcolor="#F9F9F9">
-        <td class="greyBorder" style="padding:6pt;">
-            <b>Custom item:</b> {{ item.name }} <b>NON-DISCOUNTABLE</b>
-        </td>
-        <td class="greyBorder" style="padding:6pt;">
-            {{ item.longDescription }}
+        <td class="greyBorder" style="padding:6pt; padding-left: 30px">
+            <strong>Name:</strong> {{ item.name }}<br/>
+            <strong>Description:</strong> {{ item.longDescription }}<br/>
             {% if item.internalInstructions %}
-            <p class="red"><b>Internal Instruction:</b> {{ item.internalInstructions }}</p>
+            <p class="red"><b>INTERNAL INSTRUCTIONS:</b><br/> {{ item.internalInstructions }}</p><br/>
             {% endif %}
             {% if item.internalNotes %}
-            <p class="red"><b>Internal Notes:</b> {{ item.internalNotes }}</p>
+            <p class="red"><b>INTERNAL NOTES:</b><br/> {{ item.internalNotes }}</p><br/>
             {% endif %}
         </td>
         <td class="greyBorder" style="padding:6pt;text-align:center;">1</td>
-        <td class="greyBorder" style="padding:6pt;text-align:center;">{{ item.price }}</td>
-        <td class="greyBorder" style="padding:6pt;text-align:center;">{{ item.total }}</td>
+        <!-- Price -->
+        <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
+            <p class="flexBox textCenter">
+                {{ item.price }}
+                {% if item.priceHidden %}
+                <span style="color:red; font-size:10pt;">(hidden from customer)</span>
+                {% endif %}
+            </p>
+        </td>
+
+        <!-- Total -->
+        <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
+            <p class="flexBox textCenter">
+                {{ item.total }}
+                {% if item.priceHidden %}
+                <span style="color:red; font-size:10pt;">(hidden from customer)</span>
+                {% endif %}
+            </p>
+        </td>
+
     </tr>
     {% endfor %}
     </tbody>
@@ -109,10 +124,10 @@
 
                 <!-- ALWAYS show Internal* lines for any item type -->
                 {% if item.internalInstructions %}
-                <p class="red"><b>Internal Instruction:</b> {{ item.internalInstructions }}</p>
+                <p class="red"><b>INTERNAL INSTRUCTIONS:</b><br/>{{ item.internalInstructions }}</p>
                 {% endif %}
                 {% if item.internalNotes %}
-                <p class="red"><b>Internal Notes:</b> {{ item.internalNotes }}</p>
+                <p class="red"><b>INTERNAL NOTES:</b><br/> {{ item.internalNotes }}</p>
                 {% endif %}
             </div>
         </td>
