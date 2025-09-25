@@ -31,7 +31,7 @@
 {% for category in data['categories'] %}
 {% set ns = namespace(any=false) %}
 {% for subcategory in category.subcategories %}
-{% set citems = subcategory.items | selectattr('catelogId','equalto','Custom') | list %}
+{% set citems = subcategory['items'] | selectattr('catelogId','equalto','Custom') | list %}
 {% if citems|length > 0 %}
 {% if not ns.any %}
 <table class="table" cellspacing="0">
