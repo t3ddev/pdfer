@@ -25,29 +25,55 @@
 <p class="red"><b>INTERNAL NOTES:</b><br/> {{ it.internalNotes|default('', true) }}</p>
 {%- endmacro %}
 
-{# ---------- CUSTOM ITEMS — SUMMARY (плоская сводка) ---------- #}
+{# ---------- CUSTOM ITEMS — GROUPED BY CATEGORY/SUBCATEGORY ---------- #}
 {% if custom_items and custom_items|length > 0 %}
-<h3>CUSTOM ITEMS — SUMMARY</h3>
+<h3>CUSTOM ITEMS — GROUPED BY CATEGORY</h3>
+{% for category in data['categories'] %}
+{% set ns = namespace(any=false) %}
+{% for subcategory in category.subcategories %}
+{% set citems = subcategory.items | selectattr('catelogId','equalto','Custom') | list %}
+{% if citems|length > 0 %}
+{% if not ns.any %}
 <table class="table" cellspacing="0">
-    <thead>
-    <tr class="greyBorder" bgcolor="#FF0000">
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:left;">Custom items</th>
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Quantity</th>
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Price</th>
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Total</th>
-    </tr>
-    </thead>
     <tbody>
-    {% for item in custom_items %}
-    <tr bgcolor="#F9F9F9">
-        <td class="greyBorder" style="padding:6pt; padding-left:30px;">
-            <strong>Name:</strong> {{ item.name }}<br/>
-            <strong>Description:</strong> {{ item.longDescription }}<br/>
-            {{ internal_lines(item) }}
+    <tr class="greyBorder">
+        <td class="headerHeight" colspan="3" bgcolor="#FF0000">
+            <p class="headerText font" style="color:white">{{ category.id }} <u class="font">{{ category.name }}</u></p>
         </td>
-        <td class="greyBorder" style="padding:6pt;text-align:center;">1</td>
-        <td class="greyBorder" style="padding:6pt;text-align:center;">{{ item.price | money }}</td>
-        <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
+        <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Quantity</p></td>
+        <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Price</p></td>
+        <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Total</p></td>
+    </tr>
+    {% set ns.any = true %}
+    {% endif %}
+
+    {# Заголовок подкатегории #}
+    <tr class="headerHeight">
+        <td class="greyBorder" colspan="3" bgcolor="#D9E1F3">
+            <p class="headerText font" style="padding-left:30px;">{{ subcategory.name }}</p>
+        </td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Quantity</p></td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Price</p></td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
+    </tr>
+
+    {# Строки кастом-айтемов #}
+    {% for item in citems %}
+    <tr>
+        <!-- Description -->
+        <td class="greyBorder" style="width:70%;" colspan="3" bgcolor="#F9F9F9">
+            <div class="paragraphs" style="padding-left:30px;">
+                <p><b>Custom item:</b> {{ item.name }} <b>NON-DISCOUNTABLE</b></p>
+                {{ item.longDescription }}
+                {{ internal_lines(item) }}
+            </div>
+        </td>
+        <!-- Quantity -->
+        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;"><p class="flexBox textCenter">1</p></td>
+        <!-- Price -->
+        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;"><p class="flexBox textCenter">{{ item.price | money }}</p></td>
+        <!-- Total -->
+        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;">
             <p class="flexBox textCenter">
                 {{ item.total | money }}<br/>
                 {% if item.priceHidden %}
@@ -57,9 +83,14 @@
         </td>
     </tr>
     {% endfor %}
+    {% endif %}
+    {% endfor %}
+    {% if ns.any %}
     </tbody>
 </table>
-<br>
+<br/>
+{% endif %}
+{% endfor %}
 {% endif %}
 
 <!-- Разрыв страницы для PDF -->
@@ -141,12 +172,11 @@
         </td>
     </tr>
     {% endif %}
-    {% endfor %}  {# end for item in subcategory['items'] #}
-
-    {% endfor %}  {# end for subcategory in category.subcategories #}
+    {% endfor %}
+    {% endfor %}
     </tbody>
 </table>
-{% endfor %}  {# end for category in data['categories'] #}
+{% endfor %}
 
 </body>
 </html>
