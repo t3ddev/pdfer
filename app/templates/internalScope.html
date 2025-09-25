@@ -18,27 +18,18 @@
     </style>
     <meta name="pdfkit-orientation" content="Landscape">
 </head>
+
 {% macro internal_lines(it) -%}
 <p class="red"><b>INTERNAL INSTRUCTIONS:</b><br/> {{ it.internalInstructions|default('', true) }}</p>
 <p class="red"><b>INTERNAL NOTES:</b><br/> {{ it.internalNotes|default('', true) }}</p>
 {%- endmacro %}
+
 <body>
-
-
 
 {% if custom_items and custom_items|length > 0 %}
 <h3>CUSTOM ITEMS — SUMMARY</h3>
 
 {% for category in data['categories'] %}
-{% set cat_custom = [] %}
-{% for subcategory in category.subcategories %}
-{% set sub_custom = subcategory.items | selectattr("catelogId","equalto","Custom") | list %}
-{% if sub_custom|length > 0 %}
-{% if cat_custom.append(subcategory) %}{% endif %}
-{% endif %}
-{% endfor %}
-
-{% if cat_custom|length > 0 %}
 <table class="table" cellspacing="0">
     <tbody>
     <!-- Category header -->
@@ -51,7 +42,9 @@
         </td>
     </tr>
 
-    {% for subcategory in cat_custom %}
+    {% for subcategory in category.subcategories %}
+    {% set sub_custom = subcategory.items | selectattr('catelogId','equalto','Custom') | list %}
+    {% if sub_custom|length > 0 %}
     <!-- Subcategory header -->
     <tr class="headerHeight">
         <td class="greyBorder" colspan="3" bgcolor="#D9E1F3">
@@ -62,8 +55,7 @@
         <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
     </tr>
 
-    {% for item in subcategory.items %}
-    {% if item.catelogId == 'Custom' %}
+    {% for item in sub_custom %}
     <tr>
         <!-- Description -->
         <td class="greyBorder" style="width:70%;" colspan="3" bgcolor="#F9F9F9">
@@ -94,15 +86,13 @@
             </p>
         </td>
     </tr>
-    {% endif %}
     {% endfor %}
+    {% endif %}
     {% endfor %}
     </tbody>
 </table>
 <br/>
-{% endif %}
 {% endfor %}
-
 {% endif %}
 
 <!-- Force page break for PDF -->
