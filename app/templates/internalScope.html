@@ -25,6 +25,7 @@
 <p class="red"><b>INTERNAL NOTES:</b><br/> {{ it.internalNotes|default('', true) }}</p>
 {%- endmacro %}
 
+{# ---------- CUSTOM ITEMS — SUMMARY (плоская сводка) ---------- #}
 {% if custom_items and custom_items|length > 0 %}
 <h3>CUSTOM ITEMS — SUMMARY</h3>
 <table class="table" cellspacing="0">
@@ -39,7 +40,7 @@
     <tbody>
     {% for item in custom_items %}
     <tr bgcolor="#F9F9F9">
-        <td class="greyBorder" style="padding:6pt; padding-left: 30px">
+        <td class="greyBorder" style="padding:6pt; padding-left:30px;">
             <strong>Name:</strong> {{ item.name }}<br/>
             <strong>Description:</strong> {{ item.longDescription }}<br/>
             {{ internal_lines(item) }}
@@ -61,10 +62,11 @@
 <br>
 {% endif %}
 
-<!-- Force page break for PDF (wkhtmltopdf uses page-break-after, browsers prefer break-after: page). Keeping both for compatibility -->
+<!-- Разрыв страницы для PDF -->
 <div style="page-break-after: always;"></div>
 <div style="break-after: page;"></div>
 
+{# ---------- ОСНОВНОЙ РАЗДЕЛ ---------- #}
 <h3>INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
 <h4>BASEMENT TOTAL SQ. FT. = {{ data['estimatesInfo'][0]['squareFootage'] }} SQ. FT.</h4>
 <p><b>ATTENTION! PROPERTY ON SEPTIC? BEDROOMS OR ROOMS WITH CLOSETS ARE NOT POSSIBLE UNLESS WRITTEN CONFIRMATION FROM COUNTY/CITY HEALTH DEPARTMENT IS PROVIDED! THIS INCLUDES REMODELING PROJECTS WITH EXISTING ROOMS!</b></p>
@@ -88,9 +90,9 @@
         <td class="greyBorder" colspan="3" bgcolor="#D9E1F3">
             <p class="headerText font" style="padding-left:30px;">{{ subcategory.name }}</p>
         </td>
-        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Quantity</p></td>
-        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Price</p></td>
-        <td colspan="1" class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Quantity</p></td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Price</p></td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
     </tr>
 
     {% for item in subcategory['items'] %}
@@ -139,10 +141,12 @@
         </td>
     </tr>
     {% endif %}
-    {% endfor %}
+    {% endfor %}  {# end for item in subcategory['items'] #}
+
+    {% endfor %}  {# end for subcategory in category.subcategories #}
     </tbody>
 </table>
-{% endfor %}
+{% endfor %}  {# end for category in data['categories'] #}
 
 </body>
 </html>
