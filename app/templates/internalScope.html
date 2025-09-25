@@ -43,7 +43,7 @@
     </tr>
 
     {% for subcategory in category.subcategories %}
-    {% set sub_custom = subcategory.items | selectattr('catelogId','equalto','Custom') | list %}
+    {% set sub_custom = subcategory['items'] | selectattr('catelogId','equalto','Custom') | list %}
     {% if sub_custom|length > 0 %}
     <!-- Subcategory header -->
     <tr class="headerHeight">
@@ -177,7 +177,6 @@
         </td>
     </tr>
     {% endif %}
-    {% endfor %}
     {% endfor %}
     </tbody>
 </table>
