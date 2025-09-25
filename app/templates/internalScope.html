@@ -18,53 +18,94 @@
     </style>
     <meta name="pdfkit-orientation" content="Landscape">
 </head>
-
+{% macro internal_lines(it) -%}
+<p class="red"><b>INTERNAL INSTRUCTIONS:</b><br/> {{ it.internalInstructions|default('', true) }}</p>
+<p class="red"><b>INTERNAL NOTES:</b><br/> {{ it.internalNotes|default('', true) }}</p>
+{%- endmacro %}
 <body>
+
+
 
 {% if custom_items and custom_items|length > 0 %}
 <h3>CUSTOM ITEMS — SUMMARY</h3>
+
+{% for category in data['categories'] %}
+{% set cat_custom = [] %}
+{% for subcategory in category.subcategories %}
+{% set sub_custom = subcategory.items | selectattr("catelogId","equalto","Custom") | list %}
+{% if sub_custom|length > 0 %}
+{% if cat_custom.append(subcategory) %}{% endif %}
+{% endif %}
+{% endfor %}
+
+{% if cat_custom|length > 0 %}
 <table class="table" cellspacing="0">
-    <thead>
-    <tr class="greyBorder" bgcolor="#FF0000">
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:left;">Custom items</th>
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Quantity</th>
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Price</th>
-        <th class="greyBorder" style="padding:6pt;color:#ffffff;text-align:center;width:10%;">Total</th>
-    </tr>
-    </thead>
     <tbody>
-    {% for item in custom_items %}
-    <tr bgcolor="#F9F9F9">
-        <td class="greyBorder" style="padding:6pt; padding-left: 30px">
-            <strong>Name:</strong> {{ item.name }}<br/>
-            <strong>Description:</strong> {{ item.longDescription }}<br/>
-            {% if item.internalInstructions %}
-            <p class="red"><b>INTERNAL INSTRUCTIONS:</b><br/> {{ item.internalInstructions }}</p><br/>
-            {% endif %}
-            {% if item.internalNotes %}
-            <p class="red"><b>INTERNAL NOTES:</b><br/> {{ item.internalNotes }}</p><br/>
-            {% endif %}
+    <!-- Category header -->
+    <tr class="greyBorder">
+        <td class="headerHeight" colspan="3" bgcolor="#FF0000">
+            <p class="headerText font" style="color:white">{{ category.id }} <u class="font">{{ category.name }}</u></p>
         </td>
-        <td class="greyBorder" style="padding:6pt;text-align:center;">1</td>
-        <td class="greyBorder" style="padding:6pt;text-align:center;">{{ item.price }}</td>
-        <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
+        <td class="greyBorder" style="color:white" bgcolor="#FF0000" colspan="3">
+            <div class="flexBox textCenter" style="padding-top:5pt;">Custom Items</div>
+        </td>
+    </tr>
+
+    {% for subcategory in cat_custom %}
+    <!-- Subcategory header -->
+    <tr class="headerHeight">
+        <td class="greyBorder" colspan="3" bgcolor="#D9E1F3">
+            <p class="headerText font" style="padding-left:30px;">{{ subcategory.name }}</p>
+        </td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Quantity</p></td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Price</p></td>
+        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
+    </tr>
+
+    {% for item in subcategory.items %}
+    {% if item.catelogId == 'Custom' %}
+    <tr>
+        <!-- Description -->
+        <td class="greyBorder" style="width:70%;" colspan="3" bgcolor="#F9F9F9">
+            <div class="paragraphs" style="padding-left:30px;">
+                <p><b>Custom item:</b> {{ item.name }} <b>NON-DISCOUNTABLE</b></p>
+                {{ item.longDescription }}
+                {{ internal_lines(item) }}
+            </div>
+        </td>
+
+        <!-- Quantity -->
+        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;">
+            <p class="flexBox textCenter">1</p>
+        </td>
+
+        <!-- Price -->
+        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;">
+            <p class="flexBox textCenter">${{ item.price }}</p>
+        </td>
+
+        <!-- Total -->
+        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;">
             <p class="flexBox textCenter">
-                {{ item.total }}<br/>
+                ${{ item.total }}<br/>
                 {% if item.priceHidden %}
                 <span style="color:red; font-size:10pt;">(hidden from customer)</span>
                 {% endif %}
             </p>
         </td>
     </tr>
-
+    {% endif %}
+    {% endfor %}
     {% endfor %}
     </tbody>
-
 </table>
-<br>
+<br/>
 {% endif %}
-<!-- Force page break for PDF (wkhtmltopdf uses page-break-after,
-     browsers prefer break-after: page). Keeping both for compatibility -->
+{% endfor %}
+
+{% endif %}
+
+<!-- Force page break for PDF -->
 <div style="page-break-after: always;"></div>
 <div style="break-after: page;"></div>
 
@@ -117,13 +158,7 @@
                 <a href="https://info.basementremodeling.com/guide_details/{{ item.permanentId }}">Click here for details</a>
                 {% endif %}
 
-                <!-- ALWAYS show Internal* lines for any item type -->
-                {% if item.internalInstructions %}
-                <p class="red"><b>INTERNAL INSTRUCTIONS:</b><br/>{{ item.internalInstructions }}</p>
-                {% endif %}
-                {% if item.internalNotes %}
-                <p class="red"><b>INTERNAL NOTES:</b><br/> {{ item.internalNotes }}</p>
-                {% endif %}
+                {{ internal_lines(item) }}
             </div>
         </td>
 
@@ -138,13 +173,13 @@
 
         <!-- Price -->
         <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
-            <p class="flexBox textCenter">{{ item.price }}</p>
+            <p class="flexBox textCenter">${{ item.price }}</p>
         </td>
 
         <!-- Total -->
         <td class="greyBorder" bgcolor="#F1F1F1" style="width:10%;">
             <p class="flexBox textCenter">
-                {{ item.total }}<br/>
+                ${{ item.total }}<br/>
                 {% if item.priceHidden %}
                 <span style="color:red; font-size:10pt;">(hidden from customer)</span>
                 {% endif %}
@@ -152,11 +187,11 @@
         </td>
     </tr>
     {% endif %}
-    {% endfor %} <!-- items -->
-    {% endfor %} <!-- subcats -->
+    {% endfor %}
+    {% endfor %}
     </tbody>
 </table>
-{% endfor %} <!-- categories -->
+{% endfor %}
 
 </body>
 </html>
