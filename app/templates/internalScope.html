@@ -15,6 +15,17 @@
         .tradeImg { padding: 2px; border-radius: 100px; }
         table, tr, td, th, tbody, thead, tfoot { page-break-inside: avoid !important; }
         .red { color: #FF0000; }
+
+        /* 🔴 Правила только для блока кастомов */
+        .custom-section table { page-break-inside: auto !important; break-inside: auto !important; }
+        .custom-section thead,
+        .custom-section tbody,
+        .custom-section tfoot { page-break-inside: auto !important; break-inside: auto !important; }
+        .custom-section tr { page-break-inside: avoid !important; break-inside: avoid-page !important; }
+        .custom-section td, .custom-section th { page-break-inside: auto !important; break-inside: auto !important; }
+        .custom-section thead { display: table-header-group; }
+        .custom-section tfoot { display: table-footer-group; }
+        .pagebreak-after { page-break-after: always; break-after: page; }
     </style>
     <meta name="pdfkit-orientation" content="Landscape">
 </head>
@@ -26,76 +37,75 @@
 {%- endmacro %}
 
 {# ---------- CUSTOM ITEMS — GROUPED BY CATEGORY/SUBCATEGORY ---------- #}
-{% if custom_items and custom_items|length > 0 %}
-<h3>CUSTOM ITEMS — GROUPED BY CATEGORY</h3>
-{% for category in data['categories'] %}
-{% set ns = namespace(any=false) %}
-{% for subcategory in category.subcategories %}
-{% set citems = subcategory['items'] | selectattr('catelogId','equalto','Custom') | list %}
-{% if citems|length > 0 %}
-{% if not ns.any %}
-<table class="table" cellspacing="0">
-    <tbody>
-    <tr class="greyBorder">
-        <td class="headerHeight" colspan="3" bgcolor="#FF0000">
-            <p class="headerText font" style="color:white">{{ category.id }} <u class="font">{{ category.name }}</u></p>
-        </td>
-        <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Quantity</p></td>
-        <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Price</p></td>
-        <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Total</p></td>
-    </tr>
-    {% set ns.any = true %}
+<div class="custom-section">
+    {% if custom_items and custom_items|length > 0 %}
+    <h3>CUSTOM ITEMS — GROUPED BY CATEGORY</h3>
+    {% for category in data['categories'] %}
+    {% set ns = namespace(any=false) %}
+    {% for subcategory in category.subcategories %}
+    {% set citems = subcategory['items'] | selectattr('catelogId','equalto','Custom') | list %}
+    {% if citems|length > 0 %}
+    {% if not ns.any %}
+    <table class="table" cellspacing="0">
+        <tbody>
+        <tr class="greyBorder">
+            <td class="headerHeight" colspan="3" bgcolor="#FF0000">
+                <p class="headerText font" style="color:white">{{ category.id }} <u class="font">{{ category.name }}</u></p>
+            </td>
+            <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Quantity</p></td>
+            <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Price</p></td>
+            <td class="greyBorder" bgcolor="#FF0000" style="color:white;"><p class="flexBox textCenter">Total</p></td>
+        </tr>
+        {% set ns.any = true %}
+        {% endif %}
+
+        {# Заголовок подкатегории #}
+        <tr class="headerHeight">
+            <td class="greyBorder" colspan="3" bgcolor="#D9E1F3">
+                <p class="headerText font" style="padding-left:30px;">{{ subcategory.name }}</p>
+            </td>
+            <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Quantity</p></td>
+            <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Price</p></td>
+            <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
+        </tr>
+
+        {# Строки кастом-айтемов #}
+        {% for item in citems %}
+        <tr>
+            <!-- Description -->
+            <td class="greyBorder" style="width:70%;" colspan="3" bgcolor="#F9F9F9">
+                <div class="paragraphs" style="padding-left:30px;">
+                    <p><b>Custom item:</b> {{ item.name }} <b>NON-DISCOUNTABLE</b></p>
+                    {{ item.longDescription }}
+                    {{ internal_lines(item) }}
+                </div>
+            </td>
+            <!-- Quantity -->
+            <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;"><p class="flexBox textCenter">1</p></td>
+            <!-- Price -->
+            <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;"><p class="flexBox textCenter">{{ item.price | money }}</p></td>
+            <!-- Total -->
+            <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;">
+                <p class="flexBox textCenter">
+                    {{ item.total | money }}<br/>
+                    {% if item.priceHidden %}
+                    <span style="color:red; font-size:10pt;">(hidden from customer)</span>
+                    {% endif %}
+                </p>
+            </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+        {% endfor %}
+        {% if ns.any %}
+        </tbody>
+    </table>
+    <br/>
     {% endif %}
-
-    {# Заголовок подкатегории #}
-    <tr class="headerHeight">
-        <td class="greyBorder" colspan="3" bgcolor="#D9E1F3">
-            <p class="headerText font" style="padding-left:30px;">{{ subcategory.name }}</p>
-        </td>
-        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Quantity</p></td>
-        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Price</p></td>
-        <td class="greyBorder" bgcolor="#D9E1F3"><p class="flexBox textCenter">Total</p></td>
-    </tr>
-
-    {# Строки кастом-айтемов #}
-    {% for item in citems %}
-    <tr>
-        <!-- Description -->
-        <td class="greyBorder" style="width:70%;" colspan="3" bgcolor="#F9F9F9">
-            <div class="paragraphs" style="padding-left:30px;">
-                <p><b>Custom item:</b> {{ item.name }} <b>NON-DISCOUNTABLE</b></p>
-                {{ item.longDescription }}
-                {{ internal_lines(item) }}
-            </div>
-        </td>
-        <!-- Quantity -->
-        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;"><p class="flexBox textCenter">1</p></td>
-        <!-- Price -->
-        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;"><p class="flexBox textCenter">{{ item.price | money }}</p></td>
-        <!-- Total -->
-        <td class="greyBorder" bgcolor="#F9F9F9" style="width:10%;">
-            <p class="flexBox textCenter">
-                {{ item.total | money }}<br/>
-                {% if item.priceHidden %}
-                <span style="color:red; font-size:10pt;">(hidden from customer)</span>
-                {% endif %}
-            </p>
-        </td>
-    </tr>
     {% endfor %}
     {% endif %}
-    {% endfor %}
-    {% if ns.any %}
-    </tbody>
-</table>
-<br/>
-{% endif %}
-{% endfor %}
-{% endif %}
-
-<!-- Разрыв страницы для PDF -->
-<div style="page-break-after: always;"></div>
-<div style="break-after: page;"></div>
+</div>
+<div class="pagebreak-after"></div>
 
 {# ---------- ОСНОВНОЙ РАЗДЕЛ ---------- #}
 <h3>INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
