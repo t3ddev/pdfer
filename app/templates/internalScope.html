@@ -27,8 +27,17 @@
         .custom-section thead { display: table-header-group; }
         .custom-section tfoot { display: table-footer-group; }
 
-        /* ⬇️ Старт следующей секции с новой страницы (без «пустого» листа) */
-        .next-section { page-break-before: always; break-before: page; }
+        /* ✅ Разрыв страницы с защитой от пустого листа */
+        .pagebreak {
+            page-break-after: always;
+            break-after: page;
+            height: 0;
+            margin: 0;
+            padding: 0;
+        }
+        .pagebreak:empty {
+            display: none;
+        }
     </style>
     <meta name="pdfkit-orientation" content="Landscape">
 </head>
@@ -109,8 +118,11 @@
     {% endif %}
 </div>
 
+<!-- ✅ Разрыв страницы (не создаёт пустой лист, если контент пустой) -->
+<div class="pagebreak"></div>
+
 {# ---------- ОСНОВНОЙ РАЗДЕЛ ---------- #}
-<h3 class="next-section">INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
+<h3>INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
 <h4>BASEMENT TOTAL SQ. FT. = {{ data['estimatesInfo'][0]['squareFootage'] }} SQ. FT.</h4>
 <p><b>ATTENTION! PROPERTY ON SEPTIC? BEDROOMS OR ROOMS WITH CLOSETS ARE NOT POSSIBLE UNLESS WRITTEN CONFIRMATION FROM COUNTY/CITY HEALTH DEPARTMENT IS PROVIDED! THIS INCLUDES REMODELING PROJECTS WITH EXISTING ROOMS!</b></p>
 
