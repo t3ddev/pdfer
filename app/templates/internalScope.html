@@ -13,10 +13,11 @@
         .flexBox { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
         .textCenter { text-align: center; }
         .tradeImg { padding: 2px; border-radius: 100px; }
+        /* глобальные правила оставляем как были */
         table, tr, td, th, tbody, thead, tfoot { page-break-inside: avoid !important; }
         .red { color: #FF0000; }
 
-        /* 🔴 Правила только для блока кастомов */
+        /* ✅ ЛОКАЛЬНО: только для секции кастомов разрешаем нормальный поток */
         .custom-section table { page-break-inside: auto !important; break-inside: auto !important; }
         .custom-section thead,
         .custom-section tbody,
@@ -25,7 +26,9 @@
         .custom-section td, .custom-section th { page-break-inside: auto !important; break-inside: auto !important; }
         .custom-section thead { display: table-header-group; }
         .custom-section tfoot { display: table-footer-group; }
-        .pagebreak-after { page-break-after: always; break-after: page; }
+
+        /* ⬇️ Старт следующей секции с новой страницы (без «пустого» листа) */
+        .next-section { page-break-before: always; break-before: page; }
     </style>
     <meta name="pdfkit-orientation" content="Landscape">
 </head>
@@ -105,10 +108,9 @@
     {% endfor %}
     {% endif %}
 </div>
-<div class="pagebreak-after"></div>
 
 {# ---------- ОСНОВНОЙ РАЗДЕЛ ---------- #}
-<h3>INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
+<h3 class="next-section">INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
 <h4>BASEMENT TOTAL SQ. FT. = {{ data['estimatesInfo'][0]['squareFootage'] }} SQ. FT.</h4>
 <p><b>ATTENTION! PROPERTY ON SEPTIC? BEDROOMS OR ROOMS WITH CLOSETS ARE NOT POSSIBLE UNLESS WRITTEN CONFIRMATION FROM COUNTY/CITY HEALTH DEPARTMENT IS PROVIDED! THIS INCLUDES REMODELING PROJECTS WITH EXISTING ROOMS!</b></p>
 
