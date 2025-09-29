@@ -13,11 +13,11 @@
         .flexBox { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
         .textCenter { text-align: center; }
         .tradeImg { padding: 2px; border-radius: 100px; }
-        /* глобальные правила оставляем как были */
+        /* глобальные правила как были */
         table, tr, td, th, tbody, thead, tfoot { page-break-inside: avoid !important; }
         .red { color: #FF0000; }
 
-        /* ✅ ЛОКАЛЬНО: только для секции кастомов разрешаем нормальный поток */
+        /* ✅ только для секции кастомов разрешаем нормальный поток */
         .custom-section table { page-break-inside: auto !important; break-inside: auto !important; }
         .custom-section thead,
         .custom-section tbody,
@@ -27,16 +27,12 @@
         .custom-section thead { display: table-header-group; }
         .custom-section tfoot { display: table-footer-group; }
 
-        /* ✅ Разрыв страницы с защитой от пустого листа */
-        .pagebreak {
-            page-break-after: always;
-            break-after: page;
-            height: 0;
-            margin: 0;
-            padding: 0;
-        }
-        .pagebreak:empty {
-            display: none;
+        /* ✅ заставляем следующую секцию начинаться с НОВОЙ страницы */
+        .next-section {
+            page-break-before: always;   /* для wkhtmltopdf/pdfkit */
+            break-before: page;          /* современный синтаксис */
+            margin-top: 0;               /* чтобы не схлопывались маргины */
+            display: block;
         }
     </style>
     <meta name="pdfkit-orientation" content="Landscape">
@@ -118,11 +114,8 @@
     {% endif %}
 </div>
 
-<!-- ✅ Разрыв страницы (не создаёт пустой лист, если контент пустой) -->
-<div class="pagebreak"></div>
-
 {# ---------- ОСНОВНОЙ РАЗДЕЛ ---------- #}
-<h3>INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
+<h3 class="next-section">INTERNAL SCOPE: FULL PROJECT SCOPE.</h3>
 <h4>BASEMENT TOTAL SQ. FT. = {{ data['estimatesInfo'][0]['squareFootage'] }} SQ. FT.</h4>
 <p><b>ATTENTION! PROPERTY ON SEPTIC? BEDROOMS OR ROOMS WITH CLOSETS ARE NOT POSSIBLE UNLESS WRITTEN CONFIRMATION FROM COUNTY/CITY HEALTH DEPARTMENT IS PROVIDED! THIS INCLUDES REMODELING PROJECTS WITH EXISTING ROOMS!</b></p>
 
