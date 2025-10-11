@@ -121,7 +121,15 @@
                             <div class="paragraphs" style="padding-left: 30px;">
                                 {% if item.catelogId == 'Custom' %}
                                     <p><b>Custom item:</b> {{item.name}} <b>NON-DISCOUNTABLE</b></p>
-                                    {{item.additionalInfo}}
+                                {{ item.additionalInfo
+                                | default('', true)
+                                | e
+                                | replace('\r\n','\n')
+                                | replace('\n','<br>')
+                                | replace(' - ', '<br>- ')
+                                | safe
+                                }}
+
                                 {% else %}
                                     <p><b>ITEM {{item.catelogId}}.</b> {{item.name}}</p>
                                     {% if item.additionalInfo != "" %}
