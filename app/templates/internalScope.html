@@ -40,9 +40,22 @@
 <body>
 
 {% macro internal_lines(it) -%}
-<p class="red"><b>INTERNAL INSTRUCTIONS:</b><br/> {{ it.internalInstructions|default('', true) }}</p>
-<p class="red"><b>INTERNAL NOTES:</b><br/> {{ it.internalNotes|default('', true) }}</p>
+{% if it.internalInstructions or it.internalNotes %}
+{% if it.internalInstructions %}
+<p class="red">
+    <b>INTERNAL INSTRUCTIONS:</b><br/>
+    {{ it.internalInstructions | default('', true) }}
+</p>
+{% endif %}
+{% if it.internalNotes %}
+<p class="red">
+    <b>INTERNAL NOTES:</b><br/>
+    {{ it.internalNotes | default('', true) }}
+</p>
+{% endif %}
+{% endif %}
 {%- endmacro %}
+
 
 {# ---------- CUSTOM ITEMS — GROUPED BY CATEGORY/SUBCATEGORY ---------- #}
 <div class="custom-section">
