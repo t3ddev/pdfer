@@ -189,9 +189,18 @@
 
                 {% else %}
                 <p><b>ITEM {{ item.catelogId }}.</b> {{ item.name }}</p>
-                {% if item.additionalInfo != "" %}
-                <p><b>ADDITIONAL NOTE: {{ item.additionalInfo }}</b></p>
+                {% set addi = item.additionalInfo | default('') | trim %}
+                {% if addi %}
+                <p><b>ADDITIONAL NOTE:</b></p>
+                {{ addi
+                | e
+                | replace('\r\n','\n')
+                | replace('\n','<br>')
+                | replace('<br>-','<br>- ')
+                | safe
+                }}
                 {% endif %}
+
                 {{ item.longDescription }}
                 <a href="https://info.basementremodeling.com/guide_details/{{ item.permanentId }}">Click here for details</a>
                 {% endif %}
